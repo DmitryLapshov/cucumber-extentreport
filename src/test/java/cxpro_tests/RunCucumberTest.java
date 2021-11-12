@@ -13,4 +13,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 //@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
 @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "cxpro_tests.ProTestListener")
 public class RunCucumberTest {
+    public static final String browser = "chrome";
+    public static final Boolean headless = false;
+    public static final String screenSize = "1366x768";
 }

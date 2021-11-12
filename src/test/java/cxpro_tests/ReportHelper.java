@@ -2,6 +2,8 @@ package cxpro_tests;
 
 import com.aventstack.extentreports.*;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 
 public class ReportHelper {
     public static ExtentReports extent;
@@ -11,6 +13,8 @@ public class ReportHelper {
     public static void init() {
         if (extent == null) {
             extent = new ExtentReports();
+            extent.setSystemInfo("OS", "Windows 11");
+            extent.setSystemInfo("Browser", "Chrome");
             spark = new ExtentSparkReporter("AutomatedReports/report/index.html");
             extent.attachReporter(spark);
         }
@@ -41,6 +45,8 @@ public class ReportHelper {
             }
             else {
                 step = scenario.createNode(new GherkinKeyword(keyWord), name).fail(error);
+                String screenshotBase64 = ((TakesScreenshot) Selen.driver).getScreenshotAs(OutputType.BASE64);
+                step.fail(MediaEntityBuilder.createScreenCaptureFromBase64String(screenshotBase64).build());
             }
         }
         catch (Exception ex) {

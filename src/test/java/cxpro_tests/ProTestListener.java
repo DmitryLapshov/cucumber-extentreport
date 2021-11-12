@@ -9,7 +9,6 @@ public class ProTestListener implements ConcurrentEventListener {
     private static boolean firstTime = true;
     private int stepIdx;
     private List<TestStep> steps;
-    private static final String browser = "chrome";
 
     public void onTestRunStarted(TestRunStarted event) {
         if(firstTime) {
@@ -24,7 +23,7 @@ public class ProTestListener implements ConcurrentEventListener {
             });
 
             ReportHelper.init();
-            Selen.startService(browser);
+            Selen.startService(RunCucumberTest.browser);
 
             firstTime = false;
         }
@@ -38,7 +37,7 @@ public class ProTestListener implements ConcurrentEventListener {
         ReportHelper.CreateScenario(scenarioName);
         steps = testCase.getTestSteps();
 
-        Selen.startBrowser(browser);
+        Selen.startBrowser(RunCucumberTest.browser, RunCucumberTest.headless);
     }
 
     public void onTestCaseFinished(TestCaseFinished event) {
