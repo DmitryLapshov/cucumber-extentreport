@@ -2,12 +2,12 @@ package cxpro_tests;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class StepDefinitions {
     @Given("I can load {string}")
     public void i_can_load(String string) {
         // Write code here that turns the phrase above into concrete actions
+        Selen.driver.get("https://www.youtube.com/");
         System.out.println("I can load " + string);
     }
     @Then("I can log in as Loan Officer")
@@ -25,6 +25,6 @@ public class StepDefinitions {
     @Then("I can create a new application")
     public void i_can_create_a_new_application() {
         // Write code here that turns the phrase above into concrete actions
-        throw new io.cucumber.java.PendingException();
+        int i = 1 / 0;
     }
 }

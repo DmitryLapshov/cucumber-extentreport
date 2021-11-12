@@ -7,13 +7,15 @@ import java.util.List;
 
 public class ProTestListener implements ConcurrentEventListener {
     private static boolean firstTime = true;
-    private String lastScenarioName = "";
     private int stepIdx;
     private List<TestStep> steps;
 
     public void onTestRunStarted(TestRunStarted event) {
         if(firstTime) {
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> ReportHelper.extent.flush()));
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                ReportHelper.extent.flush();
+                Selen.stopService();
+            }));
 
             Thread.setDefaultUncaughtExceptionHandler((t, e) -> {
                 System.err.println("Uncaught Exception: " + e.getMessage());
@@ -21,6 +23,7 @@ public class ProTestListener implements ConcurrentEventListener {
             });
 
             ReportHelper.init();
+            Selen.startService();
 
             firstTime = false;
         }
@@ -30,18 +33,15 @@ public class ProTestListener implements ConcurrentEventListener {
         TestCase testCase = event.getTestCase();
         String scenarioName = testCase.getName();
 
-        if (stepIdx == 0) {
-            ReportHelper.CreateScenario(scenarioName);
-            lastScenarioName = scenarioName;
-            steps = testCase.getTestSteps();
-        }
+        stepIdx = 0;
+        ReportHelper.CreateScenario(scenarioName);
+        steps = testCase.getTestSteps();
 
-        if (!lastScenarioName.equals(scenarioName)) {
-            ReportHelper.CreateScenario(scenarioName);
-            lastScenarioName = scenarioName;
-            steps = testCase.getTestSteps();
-            stepIdx = 0;
-        }
+        Selen.startBrowser();
+    }
+
+    public void onTestCaseFinished(TestCaseFinished event) {
+        Selen.stopBrowser();
     }
 
     public void onTestStepFinished(TestStepFinished event) {
@@ -59,7 +59,6 @@ public class ProTestListener implements ConcurrentEventListener {
         String src = event.getSource().split("[\\r\\n]+")[0];
         String featureName = src.substring("Feature: ".length()).trim();
         ReportHelper.CreateFeature(featureName);
-        stepIdx = 0;
     }
 
     @Override
@@ -67,6 +66,7 @@ public class ProTestListener implements ConcurrentEventListener {
         eventPublisher.registerHandlerFor(TestRunStarted.class, this::onTestRunStarted);
         eventPublisher.registerHandlerFor(TestCaseStarted.class, this::onTestCaseStarted);
         eventPublisher.registerHandlerFor(TestStepFinished.class, this::onTestStepFinished);
+        eventPublisher.registerHandlerFor(TestCaseFinished.class, this::onTestCaseFinished);
         eventPublisher.registerHandlerFor(TestSourceRead.class, this::onTestSourceReadHandler);
     }
 }
