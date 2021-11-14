@@ -1,2 +1,3 @@
 # cucumber-extentreport
-Figuring out how to correctly wire up Extentreport to Cucumber framework by using ConcurrentEventListener
+Toying with Selenium 4, JUnit 5, ExtentReports, and Cucumber.
+Figuring out how to correctly wire up ExtentReport to the Cucumber framework by using ConcurrentEventListener
